@@ -28,9 +28,15 @@ func main() {
 		// trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	}
 
+	var text string
 	for {
 		sample(context.Background())
+		if err := WriteZapLog(context.Background(), text); err != nil {
+			fmt.Printf("failed WriteZapLog len=%+v,err=%+v\n", len(text), err)
+			text = ""
+		}
 		time.Sleep(3 * time.Second)
+		text += "a"
 	}
 }
 
@@ -42,13 +48,11 @@ func sample(ctx context.Context) {
 	if r > 5 {
 		internalSample(ctx)
 	}
-
-	fmt.Println(time.Now())
 }
 
 func internalSample(ctx context.Context) {
 	ctx, span := StartSpan(ctx, "internalSample", trace.WithSampler(trace.AlwaysSample()))
 	defer span.End()
 
-	fmt.Println(time.Now())
+	time.Sleep(100 * time.Millisecond)
 }
