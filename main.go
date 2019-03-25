@@ -28,13 +28,29 @@ func main() {
 		// trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	}
 
+	zapLogger, err := NewZapLogger()
+	if err != nil {
+		panic(err)
+	}
+	zapTommy351Logger, err := NewTommy351ZapLog()
+	if err != nil {
+		panic(err)
+	}
+
 	var text string
 	for {
 		sample(context.Background())
-		if err := WriteZapLog(context.Background(), text); err != nil {
-			fmt.Printf("failed WriteZapLog len=%+v,err=%+v\n", len(text), err)
+
+		if err := zapLogger.Write(context.Background(), text); err != nil {
+			fmt.Printf("failed zapLogger.Write len=%+v,err=%+v\n", len(text), err)
 			text = ""
 		}
+
+		if err := zapTommy351Logger.Write(context.Background(), text); err != nil {
+			fmt.Printf("failed zapTommy351Logger.Write len=%+v,err=%+v\n", len(text), err)
+			text = ""
+		}
+
 		time.Sleep(3 * time.Second)
 		text += "a"
 	}
