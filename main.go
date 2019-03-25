@@ -57,7 +57,7 @@ func main() {
 }
 
 func sample(ctx context.Context) {
-	ctx, span := StartSpan(ctx, "sample")
+	ctx, span := StartSpan(ctx, "sample", trace.WithSampler(trace.AlwaysSample()))
 	defer span.End()
 
 	r := rand.Intn(10)
