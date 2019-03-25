@@ -1,0 +1,16 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    name: oc-dep
+  name: oc-dep
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: oc-dep
+    spec:
+      containers:
+      - image: gcr.io/$PROJECT_ID/sinmetal/opencensus_playground/master
+        name: oc-dep
