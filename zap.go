@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/tommy351/zap-stackdriver"
 	"go.opencensus.io/trace"
@@ -34,14 +33,15 @@ func (l *ZapLogger) Write(ctx context.Context, body string) (rerr error) {
 	}()
 	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
 
-	defer func() {
-		err := l.logger.Sync() // flushes buffer, if any
-		if rerr == nil {
-			rerr = err
-			return
-		}
-		fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
-	}()
+	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
+	//defer func() {
+	//	err := l.logger.Sync() // flushes buffer, if any
+	//	if rerr == nil {
+	//		rerr = err
+	//		return
+	//	}
+	//	fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
+	//}()
 	sugar := l.logger.Sugar()
 	sugar.Infof("WriteZapLog:%s", body)
 
@@ -91,14 +91,15 @@ func (l *Tommy351ZapLogger) Write(ctx context.Context, body string) (rerr error)
 	}()
 	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
 
-	defer func() {
-		err := l.logger.Sync() // flushes buffer, if any
-		if rerr == nil {
-			rerr = err
-			return
-		}
-		fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
-	}()
+	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
+	//defer func() {
+	//	err := l.logger.Sync() // flushes buffer, if any
+	//	if rerr == nil {
+	//		rerr = err
+	//		return
+	//	}
+	//	fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
+	//}()
 
 	return nil
 }
