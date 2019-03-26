@@ -38,21 +38,31 @@ func main() {
 	}
 
 	var text string
+	var texts []string
 	for {
-		sample(context.Background())
+		// sample(context.Background())
 
 		if err := zapLogger.Write(context.Background(), text); err != nil {
 			fmt.Printf("failed zapLogger.Write len=%+v,err=%+v\n", len(text), err)
-			text = ""
+		}
+
+		if err := zapLogger.WriteNewLine(context.Background(), texts); err != nil {
+			fmt.Printf("failed zapLogger.WriteNewLine len=%+v,err=%+v\n", len(texts), err)
 		}
 
 		if err := zapTommy351Logger.Write(context.Background(), text); err != nil {
 			fmt.Printf("failed zapTommy351Logger.Write len=%+v,err=%+v\n", len(text), err)
-			text = ""
+		}
+
+		if err := zapTommy351Logger.WriteNewLine(context.Background(), texts); err != nil {
+			fmt.Printf("failed zapTommy351Logger.WriteNewLine len=%+v,err=%+v\n", len(texts), err)
 		}
 
 		time.Sleep(1*time.Second + time.Duration(rand.Intn(10))*time.Second)
 		text += RandString(1024)
+		for i := 0; i < 10; i++ {
+			texts = append(texts, RandString(128))
+		}
 	}
 }
 
