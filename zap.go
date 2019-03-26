@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/tommy351/zap-stackdriver"
+	"go.opencensus.io/trace"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -25,7 +26,13 @@ func NewZapLogger() (*ZapLogger, error) {
 
 func (l *ZapLogger) Write(ctx context.Context, body string) (rerr error) {
 	ctx, span := StartSpan(ctx, "zap.Write")
-	defer span.End()
+	defer func() {
+		if rerr != nil {
+			span.SetStatus(trace.Status{trace.StatusCodeInternal, rerr.Error()})
+		}
+		span.End()
+	}()
+	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
 
 	defer func() {
 		err := l.logger.Sync() // flushes buffer, if any
@@ -76,7 +83,13 @@ func NewTommy351ZapLog() (*Tommy351ZapLogger, error) {
 
 func (l *Tommy351ZapLogger) Write(ctx context.Context, body string) (rerr error) {
 	ctx, span := StartSpan(ctx, "tommy351ZapLogger.Write")
-	defer span.End()
+	defer func() {
+		if rerr != nil {
+			span.SetStatus(trace.Status{trace.StatusCodeInternal, rerr.Error()})
+		}
+		span.End()
+	}()
+	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
 
 	defer func() {
 		err := l.logger.Sync() // flushes buffer, if any

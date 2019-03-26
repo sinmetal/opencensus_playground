@@ -25,7 +25,7 @@ func main() {
 			panic(err)
 		}
 		trace.RegisterExporter(exporter)
-		// trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 	}
 
 	zapLogger, err := NewZapLogger()
@@ -51,13 +51,13 @@ func main() {
 			text = ""
 		}
 
-		time.Sleep(3 * time.Second)
-		text += "a"
+		time.Sleep(1*time.Second + time.Duration(rand.Intn(10))*time.Second)
+		text += RandString(1024)
 	}
 }
 
 func sample(ctx context.Context) {
-	ctx, span := StartSpan(ctx, "sample", trace.WithSampler(trace.AlwaysSample()))
+	ctx, span := StartSpan(ctx, "sample")
 	defer span.End()
 
 	r := rand.Intn(10)
@@ -67,8 +67,8 @@ func sample(ctx context.Context) {
 }
 
 func internalSample(ctx context.Context) {
-	ctx, span := StartSpan(ctx, "internalSample", trace.WithSampler(trace.AlwaysSample()))
+	ctx, span := StartSpan(ctx, "internalSample")
 	defer span.End()
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(30 * time.Millisecond)
 }
