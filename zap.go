@@ -2,7 +2,9 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"strings"
+	"time"
 
 	"github.com/tommy351/zap-stackdriver"
 	"go.opencensus.io/trace"
@@ -34,6 +36,12 @@ func (l *ZapLogger) Write(ctx context.Context, body string) (rerr error) {
 	}()
 	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(body))))
 
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("zap.Write:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+		}
+	}(time.Now())
 	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
 	//defer func() {
 	//	err := l.logger.Sync() // flushes buffer, if any
@@ -61,6 +69,13 @@ func (l *ZapLogger) WriteNewLine(ctx context.Context, body []string) (rerr error
 
 	text := strings.Join(body, "\n")
 	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(text))))
+
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("zap.WriteNewLine:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+		}
+	}(time.Now())
 
 	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
 	//defer func() {
@@ -120,6 +135,13 @@ func (l *Tommy351ZapLogger) Write(ctx context.Context, body string) (rerr error)
 	}()
 	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(body))))
 
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("tommy351ZapLogger.Write:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+		}
+	}(time.Now())
+
 	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
 	//defer func() {
 	//	err := l.logger.Sync() // flushes buffer, if any
@@ -145,6 +167,13 @@ func (l *Tommy351ZapLogger) WriteNewLine(ctx context.Context, body []string) (re
 
 	text := strings.Join(body, "\n")
 	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(text))))
+
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("tommy351ZapLogger.WriteNewLine:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+		}
+	}(time.Now())
 
 	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
 	//defer func() {
