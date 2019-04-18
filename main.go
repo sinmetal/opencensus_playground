@@ -12,20 +12,22 @@ import (
 )
 
 func main() {
-	project, err := gcpmetadata.GetProjectID()
-	if err != nil {
-		panic(err)
-	}
-
-	{
-		exporter, err := stackdriver.NewExporter(stackdriver.Options{
-			ProjectID: project,
-		})
+	if gcpmetadata.OnGCP() {
+		project, err := gcpmetadata.GetProjectID()
 		if err != nil {
 			panic(err)
 		}
-		trace.RegisterExporter(exporter)
-		trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+
+		{
+			exporter, err := stackdriver.NewExporter(stackdriver.Options{
+				ProjectID: project,
+			})
+			if err != nil {
+				panic(err)
+			}
+			trace.RegisterExporter(exporter)
+			trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+		}
 	}
 
 	zapLogger, err := NewZapLogger()
