@@ -26,7 +26,7 @@ func NewZapLogger() (*ZapLogger, error) {
 	}, nil
 }
 
-func (l *ZapLogger) Write(ctx context.Context, body string) (rerr error) {
+func (l *ZapLogger) Write(ctx context.Context, body string, goroutineNumber int) (rerr error) {
 	ctx, span := StartSpan(ctx, "zap.Write")
 	defer func() {
 		if rerr != nil {
@@ -42,7 +42,7 @@ func (l *ZapLogger) Write(ctx context.Context, body string) (rerr error) {
 	defer func(n time.Time) {
 		d := time.Since(n)
 		if d.Seconds() > 1 {
-			fmt.Printf("zap.Write:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+			fmt.Printf("go:%d:zap.Write:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
 		}
 	}(time.Now())
 	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
@@ -60,7 +60,7 @@ func (l *ZapLogger) Write(ctx context.Context, body string) (rerr error) {
 	return nil
 }
 
-func (l *ZapLogger) WriteNewLine(ctx context.Context, body []string) (rerr error) {
+func (l *ZapLogger) WriteNewLine(ctx context.Context, body []string, goroutineNumber int) (rerr error) {
 	ctx, span := StartSpan(ctx, "zap.WriteNewLine")
 	defer func() {
 		if rerr != nil {
@@ -79,7 +79,7 @@ func (l *ZapLogger) WriteNewLine(ctx context.Context, body []string) (rerr error
 	defer func(n time.Time) {
 		d := time.Since(n)
 		if d.Seconds() > 1 {
-			fmt.Printf("zap.WriteNewLine:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+			fmt.Printf("go:%d:zap.WriteNewLine:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
 		}
 	}(time.Now())
 
@@ -131,7 +131,7 @@ func NewTommy351ZapLog() (*Tommy351ZapLogger, error) {
 	}, nil
 }
 
-func (l *Tommy351ZapLogger) Write(ctx context.Context, body string) (rerr error) {
+func (l *Tommy351ZapLogger) Write(ctx context.Context, body string, goroutineNumber int) (rerr error) {
 	ctx, span := StartSpan(ctx, "tommy351ZapLogger.Write")
 	defer func() {
 		if rerr != nil {
@@ -147,7 +147,7 @@ func (l *Tommy351ZapLogger) Write(ctx context.Context, body string) (rerr error)
 	defer func(n time.Time) {
 		d := time.Since(n)
 		if d.Seconds() > 1 {
-			fmt.Printf("tommy351ZapLogger.Write:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+			fmt.Printf("go:%d:tommy351ZapLogger.Write:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
 		}
 	}(time.Now())
 
@@ -164,7 +164,7 @@ func (l *Tommy351ZapLogger) Write(ctx context.Context, body string) (rerr error)
 	return nil
 }
 
-func (l *Tommy351ZapLogger) WriteNewLine(ctx context.Context, body []string) (rerr error) {
+func (l *Tommy351ZapLogger) WriteNewLine(ctx context.Context, body []string, goroutineNumber int) (rerr error) {
 	ctx, span := StartSpan(ctx, "tommy351ZapLogger.WriteNewLine")
 	defer func() {
 		if rerr != nil {
@@ -183,7 +183,7 @@ func (l *Tommy351ZapLogger) WriteNewLine(ctx context.Context, body []string) (re
 	defer func(n time.Time) {
 		d := time.Since(n)
 		if d.Seconds() > 1 {
-			fmt.Printf("tommy351ZapLogger.WriteNewLine:WriteZapTime:%v/ bodySize=%v \n", d, int64(len(body)))
+			fmt.Printf("go:%d:tommy351ZapLogger.WriteNewLine:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
 		}
 	}(time.Now())
 
