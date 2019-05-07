@@ -39,6 +39,10 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+
+		go func() {
+			bq.InfinityFlush()
+		}()
 	}
 
 	slogger := NewSimpleLogService(bq)
