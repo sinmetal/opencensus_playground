@@ -60,6 +60,39 @@ func (l *ZapLogger) Write(ctx context.Context, body string, goroutineNumber int)
 	return nil
 }
 
+func (l *ZapLogger) WriteNoSugar(ctx context.Context, body string, goroutineNumber int) (rerr error) {
+	ctx, span := StartSpan(ctx, "zap.WriteNoSugar")
+	defer func() {
+		if rerr != nil {
+			span.SetStatus(trace.Status{trace.StatusCodeInternal, rerr.Error()})
+		}
+		span.End()
+	}()
+	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(body))))
+	if err := RecordMeasurement("zap.WriteNoSugar", int64(len(body))); err != nil {
+		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
+	}
+
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("go:%d:zap.WriteNoSugar:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
+		}
+	}(time.Now())
+	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
+	//defer func() {
+	//	err := l.logger.Sync() // flushes buffer, if any
+	//	if rerr == nil {
+	//		rerr = err
+	//		return
+	//	}
+	//	fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
+	//}()
+	l.logger.Info(fmt.Sprintf("WriteZapLog:%s", body))
+
+	return nil
+}
+
 func (l *ZapLogger) WriteNewLine(ctx context.Context, body []string, goroutineNumber int) (rerr error) {
 	ctx, span := StartSpan(ctx, "zap.WriteNewLine")
 	defer func() {
@@ -94,6 +127,43 @@ func (l *ZapLogger) WriteNewLine(ctx context.Context, body []string, goroutineNu
 	//}()
 	sugar := l.logger.Sugar()
 	sugar.Infof("WriteZapLog:%s", text)
+
+	return nil
+}
+
+func (l *ZapLogger) WriteNewLineNoSugar(ctx context.Context, body []string, goroutineNumber int) (rerr error) {
+	ctx, span := StartSpan(ctx, "zap.WriteNewLineNoSugar")
+	defer func() {
+		if rerr != nil {
+			span.SetStatus(trace.Status{trace.StatusCodeInternal, rerr.Error()})
+		}
+		span.End()
+	}()
+	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
+	if err := RecordMeasurement("zap.WriteNewLineNoSugar", int64(len(body))); err != nil {
+		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
+	}
+
+	text := strings.Join(body, "\n")
+	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(text))))
+
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("go:%d:zap.WriteNewLineNoSugar:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
+		}
+	}(time.Now())
+
+	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
+	//defer func() {
+	//	err := l.logger.Sync() // flushes buffer, if any
+	//	if rerr == nil {
+	//		rerr = err
+	//		return
+	//	}
+	//	fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
+	//}()
+	l.logger.Info(fmt.Sprintf("WriteZapLog:%s", text))
 
 	return nil
 }
@@ -160,6 +230,42 @@ func (l *Tommy351ZapLogger) Write(ctx context.Context, body string, goroutineNum
 	//	}
 	//	fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
 	//}()
+	sugar := l.logger.Sugar()
+	sugar.Infof("WriteZapLog:%s", body)
+
+	return nil
+}
+
+func (l *Tommy351ZapLogger) WriteNoSugar(ctx context.Context, body string, goroutineNumber int) (rerr error) {
+	ctx, span := StartSpan(ctx, "tommy351ZapLogger.WriteNoSugar")
+	defer func() {
+		if rerr != nil {
+			span.SetStatus(trace.Status{trace.StatusCodeInternal, rerr.Error()})
+		}
+		span.End()
+	}()
+	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(body))))
+	if err := RecordMeasurement("tommy351ZapLogger.WriteNoSugar", int64(len(body))); err != nil {
+		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
+	}
+
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("go:%d:tommy351ZapLogger.WriteNoSugar:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
+		}
+	}(time.Now())
+
+	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
+	//defer func() {
+	//	err := l.logger.Sync() // flushes buffer, if any
+	//	if rerr == nil {
+	//		rerr = err
+	//		return
+	//	}
+	//	fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
+	//}()
+	l.logger.Info(fmt.Sprintf("WriteZapLog:%s", body))
 
 	return nil
 }
@@ -198,6 +304,43 @@ func (l *Tommy351ZapLogger) WriteNewLine(ctx context.Context, body []string, gor
 	//}()
 	sugar := l.logger.Sugar()
 	sugar.Infof("WriteZapLog:%s", text)
+
+	return nil
+}
+
+func (l *Tommy351ZapLogger) WriteNewLineNoSugar(ctx context.Context, body []string, goroutineNumber int) (rerr error) {
+	ctx, span := StartSpan(ctx, "tommy351ZapLogger.WriteNewLineNoSugar")
+	defer func() {
+		if rerr != nil {
+			span.SetStatus(trace.Status{trace.StatusCodeInternal, rerr.Error()})
+		}
+		span.End()
+	}()
+	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
+	if err := RecordMeasurement("tommy351ZapLogger.WriteNewLineNoSugar", int64(len(body))); err != nil {
+		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
+	}
+
+	text := strings.Join(body, "\n")
+	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(text))))
+
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("go:%d:tommy351ZapLogger.WriteNewLineNoSugar:WriteZapTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
+		}
+	}(time.Now())
+
+	// localでは動くけど、GKE上では `sync /dev/stderr: invalid argument` と言われてエラーになる
+	//defer func() {
+	//	err := l.logger.Sync() // flushes buffer, if any
+	//	if rerr == nil {
+	//		rerr = err
+	//		return
+	//	}
+	//	fmt.Printf("failed WriteZapLog Sync. err=%+v\n", err)
+	//}()
+	l.logger.Info(fmt.Sprintf("WriteZapLog:%s", body))
 
 	return nil
 }

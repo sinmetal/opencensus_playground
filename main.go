@@ -60,16 +60,32 @@ func main() {
 					fmt.Printf("failed zapLogger.Write len=%+v,err=%+v\n", len(text), err)
 				}
 
+				if err := zapLogger.WriteNoSugar(context.Background(), text, i); err != nil {
+					fmt.Printf("failed zapLogger.WriteNoSugar len=%+v,err=%+v\n", len(text), err)
+				}
+
 				if err := zapLogger.WriteNewLine(context.Background(), texts, i); err != nil {
 					fmt.Printf("failed zapLogger.WriteNewLine len=%+v,err=%+v\n", len(texts), err)
+				}
+
+				if err := zapLogger.WriteNewLineNoSugar(context.Background(), texts, i); err != nil {
+					fmt.Printf("failed zapLogger.WriteNewLineNoSugar len=%+v,err=%+v\n", len(texts), err)
 				}
 
 				if err := zapTommy351Logger.Write(context.Background(), text, i); err != nil {
 					fmt.Printf("failed zapTommy351Logger.Write len=%+v,err=%+v\n", len(text), err)
 				}
 
+				if err := zapTommy351Logger.WriteNoSugar(context.Background(), text, i); err != nil {
+					fmt.Printf("failed zapTommy351Logger.WriteNoSugar len=%+v,err=%+v\n", len(text), err)
+				}
+
 				if err := zapTommy351Logger.WriteNewLine(context.Background(), texts, i); err != nil {
 					fmt.Printf("failed zapTommy351Logger.WriteNewLine len=%+v,err=%+v\n", len(texts), err)
+				}
+
+				if err := zapTommy351Logger.WriteNewLineNoSugar(context.Background(), texts, i); err != nil {
+					fmt.Printf("failed zapTommy351Logger.WriteNewLineNoSugar len=%+v,err=%+v\n", len(texts), err)
 				}
 
 				text += RandString(1024)
