@@ -84,7 +84,7 @@ var (
 		Measure:     MLogSize,
 		TagKeys:     []tag.Key{KeySource},
 		Description: "log size",
-		Aggregation: view.LastValue(),
+		Aggregation: view.Sum(),
 	}
 
 	LogSizeViews = []*view.View{
