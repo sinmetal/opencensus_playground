@@ -18,6 +18,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
+		fmt.Printf("GOOGLE_CLOUD_PROJECT:%s\n", project)
 
 		{
 			exporter, err := stackdriver.NewExporter(stackdriver.Options{
