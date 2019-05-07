@@ -35,14 +35,15 @@ func main() {
 			InitOpenCensusStats(exporter)
 		}
 
-		bq, err = NewBigQueryService(context.Background(), project)
-		if err != nil {
-			panic(err)
-		}
-
-		go func() {
-			bq.InfinityFlush()
-		}()
+		// bqに入れようとすると発生しなくなるので、とりあえず止めた
+		//bq, err = NewBigQueryService(context.Background(), project)
+		//if err != nil {
+		//	panic(err)
+		//}
+		//
+		//go func() {
+		//	bq.InfinityFlush()
+		//}()
 	}
 
 	slogger := NewSimpleLogService(bq)
