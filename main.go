@@ -35,15 +35,14 @@ func main() {
 			InitOpenCensusStats(exporter)
 		}
 
-		// BQに出力する処理に時間がかかって、ログ出力量が減り、つまらなくなるので止めた
-		//bq, err = NewBigQueryService(context.Background(), project)
-		//if err != nil {
-		//	panic(err)
-		//}
-		//
-		//go func() {
-		//	bq.InfinityFlush()
-		//}()
+		bq, err = NewBigQueryService(context.Background(), project)
+		if err != nil {
+			panic(err)
+		}
+
+		go func() {
+			bq.InfinityFlush()
+		}()
 	}
 
 	slogger := NewSimpleLogService(bq)

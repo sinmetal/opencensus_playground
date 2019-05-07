@@ -33,8 +33,9 @@ type BQRow struct {
 	Timestamp time.Time
 }
 
-func (s *BigQueryService) Insert(ctx context.Context, row *BQRow) {
+func (s *BigQueryService) Insert(ctx context.Context, row *BQRow) error {
 	s.bufferChan <- row
+	return nil
 }
 
 func (s *BigQueryService) InfinityFlush() {
