@@ -102,12 +102,12 @@ func (l *ZapLogger) WriteNewLine(ctx context.Context, body []string, goroutineNu
 		span.End()
 	}()
 	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
-	if err := RecordMeasurement("zap.WriteNewLine", int64(len(body))); err != nil {
-		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
-	}
 
 	text := strings.Join(body, "\n")
 	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(text))))
+	if err := RecordMeasurement("zap.WriteNewLine", int64(len(text))); err != nil {
+		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
+	}
 
 	defer func(n time.Time) {
 		d := time.Since(n)
@@ -279,12 +279,12 @@ func (l *Tommy351ZapLogger) WriteNewLine(ctx context.Context, body []string, gor
 		span.End()
 	}()
 	span.AddAttributes(trace.Int64Attribute("bodyLength", int64(len(body))))
-	if err := RecordMeasurement("tommy351ZapLogger.WriteNewLine", int64(len(body))); err != nil {
-		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
-	}
 
 	text := strings.Join(body, "\n")
 	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(text))))
+	if err := RecordMeasurement("tommy351ZapLogger.WriteNewLine", int64(len(text))); err != nil {
+		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
+	}
 
 	defer func(n time.Time) {
 		d := time.Since(n)
