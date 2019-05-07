@@ -28,6 +28,10 @@ func main() {
 			trace.RegisterExporter(exporter)
 			trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
 		}
+		{
+			exporter := InitExporter()
+			InitOpenCensusStats(exporter)
+		}
 	}
 
 	zapLogger, err := NewZapLogger()
