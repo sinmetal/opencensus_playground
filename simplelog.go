@@ -39,7 +39,7 @@ func (s *SimpleLogService) Output(ctx context.Context, body string, goroutineNum
 			fmt.Printf("go:%d:fmt.Printf:WriteLogTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
 		}
 		if s.BQ != nil {
-			if err := s.BQ.Insert(ctx, &BQRow{Name: name, LogSize: logSize, Latency: d.Seconds()}); err != nil {
+			if err := s.BQ.Insert(ctx, &BQRow{Name: name, LogSize: logSize, Latency: d.Seconds(), Timestamp: time.Now()}); err != nil {
 				panic(err)
 			}
 		}

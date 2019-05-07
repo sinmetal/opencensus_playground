@@ -34,6 +34,7 @@ func main() {
 			exporter := InitExporter()
 			InitOpenCensusStats(exporter)
 		}
+
 		bq, err = NewBigQueryService(context.Background(), project)
 		if err != nil {
 			panic(err)

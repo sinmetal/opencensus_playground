@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
+	"log"
+	"time"
 
 	"cloud.google.com/go/bigquery"
-	"github.com/google/uuid"
 )
 
 type BigQueryService struct {
@@ -22,22 +23,25 @@ func NewBigQueryService(ctx context.Context, projectID string) (*BigQueryService
 }
 
 type BQRow struct {
-	Name    string
-	LogSize int64
-	Latency float64
-}
-
-func (r *BQRow) Save() (row map[string]bigquery.Value, insertID string, err error) {
-	m := map[string]bigquery.Value{}
-	m["Name"] = r.Name
-	m["LogSize"] = r.LogSize
-	m["Latency"] = r.Latency
-	return m, uuid.New().String(), nil
+	Name      string
+	LogSize   int64
+	Latency   float64
+	Timestamp time.Time
 }
 
 func (s *BigQueryService) Insert(ctx context.Context, row *BQRow) error {
-	inserter := s.BQ.Dataset("pottary").Table("Latency").Inserter()
-	if err := inserter.Put(ctx, row); err != nil {
+	inserter := s.BQ.Dataset("pottary").Table("OpenCensus").Inserter()
+	rows := []*BQRow{
+		row,
+	}
+	if err := inserter.Put(ctx, rows); err != nil {
+		switch e := err.(type) {
+		case bigquery.PutMultiError:
+			rowInsertionError := e[0] // the first failed row
+			for _, err := range rowInsertionError.Errors {
+				log.Printf("err = %v", err)
+			}
+		}
 		return err
 	}
 	return nil
