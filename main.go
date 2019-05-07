@@ -43,11 +43,11 @@ func main() {
 
 	slogger := NewSimpleLogService(bq)
 
-	zapLogger, err := NewZapLogger()
+	zapLogger, err := NewZapLogger(bq)
 	if err != nil {
 		panic(err)
 	}
-	zapTommy351Logger, err := NewTommy351ZapLog()
+	zapTommy351Logger, err := NewTommy351ZapLog(bq)
 	if err != nil {
 		panic(err)
 	}
