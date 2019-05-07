@@ -52,6 +52,10 @@ func main() {
 			for {
 				// sample(context.Background())
 
+				if err := outputSimpleLog(context.Background(), text, i); err != nil {
+					fmt.Printf("failed outputSimpleLog len=%+v,err=%+v\n", len(text), err)
+				}
+
 				if err := zapLogger.Write(context.Background(), text, i); err != nil {
 					fmt.Printf("failed zapLogger.Write len=%+v,err=%+v\n", len(text), err)
 				}
@@ -95,4 +99,29 @@ func internalSample(ctx context.Context) {
 	defer span.End()
 
 	time.Sleep(30 * time.Millisecond)
+}
+
+func outputSimpleLog(ctx context.Context, body string, goroutineNumber int) (rerr error) {
+	ctx, span := StartSpan(ctx, "fmt.Printf")
+	defer func() {
+		if rerr != nil {
+			span.SetStatus(trace.Status{trace.StatusCodeInternal, rerr.Error()})
+		}
+		span.End()
+	}()
+	span.AddAttributes(trace.Int64Attribute("bodySize", int64(len(body))))
+	if err := RecordMeasurement("fmt.Printf", int64(len(body))); err != nil {
+		fmt.Printf("failed RecordMeasurement. err=%+v\n", err)
+	}
+
+	defer func(n time.Time) {
+		d := time.Since(n)
+		if d.Seconds() > 1 {
+			fmt.Printf("go:%d:fmt.Printf:WriteLogTime:%v/ bodySize=%v \n", goroutineNumber, d, int64(len(body)))
+		}
+	}(time.Now())
+
+	fmt.Printf("fmt.Printf:%s\n", body)
+
+	return nil
 }
